@@ -1,16 +1,9 @@
 import express from 'express';
 
 import {
-    validarSenha,
-    validarNumeroConta,
-    verificarCpf, validarCpf,
-    validarDataDeNascimento,
-    verificarEmail,
-    validarEmail,
-    validarNome,
-    validarSenhaCadastro,
-    validarTelefone,
-    verificarSaldo
+    validarListagem,
+    validarDados,
+    validarExclusao
 } from './middlewares/contasMiddleware.js';
 
 import { 
@@ -32,10 +25,10 @@ import { depositar, exibirExtrato, exibirSaldo, sacar, transferir } from './cont
 
 const router = express.Router();
 
-router.get('/contas', validarSenha, listarContas);
-router.post('/contas', validarSenha, verificarCpf, validarCpf, validarDataDeNascimento, verificarEmail, validarEmail, validarNome, validarSenhaCadastro, validarTelefone, cadastrarConta);
-router.put('/contas/:numeroConta/usuario', validarSenha, validarNumeroConta, validarCpf, validarDataDeNascimento, validarEmail, validarNome, validarSenhaCadastro, validarTelefone, atualizarConta);
-router.delete('/contas/:numeroConta', validarSenha, validarNumeroConta, verificarSaldo, excluirConta);
+router.get('/contas', validarListagem, listarContas);
+router.post('/contas', validarDados, cadastrarConta);
+router.put('/contas/:numeroConta/usuario', validarDados, atualizarConta);
+router.delete('/contas/:numeroConta', validarExclusao, excluirConta);
 router.get('/contas/saldo', validarSaldo, exibirSaldo);
 router.get('/contas/extrato', validarExtrato, exibirExtrato);
 

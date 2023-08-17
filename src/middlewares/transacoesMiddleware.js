@@ -1,5 +1,5 @@
 import bancodedados from "../bancodedados.js";
-import { validarNumeroConta, validarSaldoInsuficiente, validarSenhaConta, validarValor} from "../utils/utils.js";
+import { validarNumeroConta, validarSaldoInsuficiente, validarSenhaConta, validarValor} from "../utils/transacoesUtils.js";
 
 export const validarDeposito = (req, res, next) => {
     const { numero_conta, valor} = req.body;
