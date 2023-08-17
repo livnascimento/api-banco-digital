@@ -1,5 +1,3 @@
-import bancodedados from "../bancodedados.js";
-
 import { validarCpf, validarDataDeNascimento, validarEmail, validarNome, validarSaldoZerado, validarSenhaBanco, validarSenhaCadastro, validarTelefone } from "../utils/contaUtils.js";
 import { validarNumeroConta } from "../utils/transacoesUtils.js";
 
@@ -14,37 +12,20 @@ export const validarListagem = (req, res, next) => {
 
 export const validarDados = (req, res, next) => {
     const { nome, cpf, data_nascimento, telefone, email, senha} = req.body;
-    const errors = [];
+    const validacoes = [validarNome(nome), validarCpf(cpf), validarDataDeNascimento(data_nascimento), validarTelefone(telefone), validarEmail(email), validarSenhaCadastro(senha)]
 
-    errors.push(validarNome(nome));
-    errors.push(validarCpf(cpf));
-    errors.push(validarDataDeNascimento(data_nascimento));
-    errors.push(validarTelefone(telefone));
-    errors.push(validarEmail(email));
-    errors.push(validarSenhaCadastro(senha));
-
-    const error = errors.find(erro => erro != undefined);
-
-    if (error) {
-        return res.status(error.status).json({"message": error.message});
-    }
+    for (let validacao of validacoes)
+        if (validacao) return res.status(validacao.status).json({"message": validacao.message});
 
     next();
 };
 
 export const validarExclusao = (req, res, next) => {
     const {numeroConta} = req.params;
-    const errors = [];
-    
-    errors.push(validarNumeroConta(numeroConta));
-    errors.push(validarSaldoZerado(numeroConta));
+    const validacoes = [validarNumeroConta(numeroConta), validarSaldoZerado(numeroConta)];
 
-    const error = errors.find(erro => erro != undefined);
+    for (let validacao of validacoes)
+        if (validacao) return res.status(validacao.status).json({"message": validacao.message});
 
-    if (error) {
-        return res.status(error.status).json({"message": error.message});
-    }
-
-    next();
-
-}
+    next();   
+};
