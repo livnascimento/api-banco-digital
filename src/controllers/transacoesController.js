@@ -49,3 +49,28 @@ export const transferir = (req, res) => {
     return res.status(200).send(bancodedados);
 
 };
+
+export const exibirSaldo = (req, res) => {
+    const { numero_conta } = req.query;
+    const conta = bancodedados.contas.find(conta => conta.numero === numero_conta);
+
+    return res.status(200).json({"saldo": conta.saldo});    
+};
+
+export const exibirExtrato = (req, res) => {
+    const { numero_conta } = req.query;
+
+    const depositos = bancodedados.depositos.filter(deposito => deposito.numero_conta === numero_conta);
+    const saques = bancodedados.saques.filter(saque => saque.numero_conta === numero_conta);
+    const transferenciasEnviadas = bancodedados.transferencias.filter(transferencia => transferencia.numero_conta_origem === numero_conta);
+    const transferenciasRecebidas = bancodedados.transferencias.filter(transferencia => transferencia.numero_conta_destino === numero_conta);
+
+    const extrato = {
+        depositos,
+        saques,
+        transferenciasEnviadas,
+        transferenciasRecebidas
+    }
+
+    res.status(200).json(extrato);
+}

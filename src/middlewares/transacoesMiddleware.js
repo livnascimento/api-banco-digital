@@ -1,95 +1,79 @@
 import bancodedados from "../bancodedados.js";
+import { validarNumeroConta, validarSaldoInsuficiente, validarSenhaConta, validarValor} from "../utils/utils.js";
 
-export const verificarValor = (req, res, next) => {
-    const { valor } = req.body;
+export const validarDeposito = (req, res, next) => {
+    const { numero_conta, valor} = req.body;
 
-    if (!valor) {
-        return res.status(400).json({"message": "O valor do depósito é obrigatório."});
-    };
+    const erroNumero = validarNumeroConta(numero_conta);
+    if(erroNumero) return res.status(erroNumero.status).json({"message": erroNumero.message});
 
-    if (valor <= 0) {
-        return res.status(400).json({"message": "O valor deve ser maior que zero."});
-    }
-
-    next();
-};
-
-export const verificarNumeroConta = (req, res, next) => {
-    const { numero_conta } = req.body;
-
-    if (!numero_conta) {
-        return res.status(400).json({"message": "O número da conta é obrigatório."});
-    };
-
-    if (!bancodedados.contas.some(conta => conta.numero === numero_conta)) {
-        return res.status(400).json({"message": "Não existe uma conta com esse número. Nem uma conta foi deletada"});
-    }
+    const erroValor = validarValor(valor);
+    if (erroValor) return res.status(erroValor.status).json({"message": erroValor.message});
 
     next();
-};
+}
 
-export const verificarSenhaConta = (req, res, next) => {
-    const { senha, numero_conta, numero_conta_origem } = req.body;
-    const conta = bancodedados.contas.find(conta => conta.numero === numero_conta);
+export const validarSaque = (req, res, next) => {
+    const { senha, numero_conta, valor } = req.body;
+    const conta = bancodedados.contas.find(conta => conta.numero == numero_conta);
+
+    const erroNumero = validarNumeroConta(numero_conta);
+    if(erroNumero) return res.status(erroNumero.status).json({"message": erroNumero.message});
+
+    const erroSenha = validarSenhaConta(conta, senha);
+    if (erroSenha) return res.status(erroSenha.status).json({"message": erroSenha.message});
+
+    const erroValor = validarValor(valor);
+    if (erroValor) return res.status(erroValor.status).json({"message": erroValor.message});
+
+    next();
+}
+
+export const validarTransferencia = (req, res, next) => {
+    const { numero_conta_origem, numero_conta_destino, valor, senha } = req.body;
     const contaOrigem = bancodedados.contas.find(conta => conta.numero === numero_conta_origem);
 
-    if (!senha) {
-        return res.status(400).json({"message": "A senha é obrigatória."});
-    };
+    const erroContaOrigem = validarNumeroConta(numero_conta_origem);
+    if (erroContaOrigem) return res.status(erroContaOrigem.status).json({"message": "Erro na conta origem: " + erroContaOrigem.message});
 
-    if (conta) {
-        if (senha != conta.senha) {
-            return res.status(400).json({"message": "Senha incorreta."});
-        };
-    };
+    const erroContaDestino = validarNumeroConta(numero_conta_destino);
+    if (erroContaDestino) return res.status(erroContaDestino.status).json({"message": "Erro na conta destino: " + erroContaDestino.message});
+
+    const erroSenha = validarSenhaConta(contaOrigem, senha);
+    if (erroSenha) return res.status(erroSenha.status).json({"message": erroSenha.message});
     
-    if (contaOrigem) {
-        if (senha != contaOrigem.senha) {
-            return res.status(400).json({"message": "Senha incorreta."});
-        };
-    }
+    const erroValor = validarValor(valor);
+    if (erroValor) return res.status(erroValor.status).json({"message": erroValor.message});
 
-
+    const erroSaldo = validarSaldoInsuficiente(contaOrigem, valor);
+    if (erroSaldo) return res.status(erroSaldo.status).json({"message": erroSaldo.message});
+    
     next();
 };
 
-export const verificarSaldoInsuficiente = (req, res, next) => {
-    const { valor, numero_conta, numero_conta_origem } = req.body;
-    const conta = bancodedados.contas.find(conta => conta.numero === numero_conta);
-    const contaOrigem = bancodedados.contas.find(conta => conta.numero === numero_conta_origem);
+export const validarSaldo = (req, res, next) => {
+    const { senha, numero_conta } = req.query;
+    const conta = bancodedados.contas.find(conta => conta.numero == numero_conta);
 
-    if (conta) {
-        if (valor > conta.saldo ) {
-            return res.status(400).json({"message": "Saldo insuficiente."});
-        }
-    };
+    const erroNumero = validarNumeroConta(numero_conta);
+    if(erroNumero) return res.status(erroNumero.status).json({"message": erroNumero.message});
 
-    if (contaOrigem) {
-        if (valor > contaOrigem.saldo ) {
-            return res.status(400).json({"message": "Saldo insuficiente."});
-        }
-    };
+
+    const erroSenha = validarSenhaConta(conta, senha);
+    if (erroSenha) return res.status(erroSenha.status).json({"message": erroSenha.message});
 
     next();
+}
 
-};
+export const validarExtrato = (req, res, next) => {
+    const { senha, numero_conta } = req.query;
+    const conta = bancodedados.contas.find(conta => conta.numero == numero_conta);
 
-export const verificarContasTransferencia = (req, res, next) => {
-    const { numero_conta_origem, numero_conta_destino } = req.body;
-    const contaOrigem = bancodedados.contas.find(conta => conta.numero === numero_conta_origem);
-    const contaDestino = bancodedados.contas.find(conta => conta.numero === numero_conta_destino);
+    const erroNumero = validarNumeroConta(numero_conta);
+    if(erroNumero) return res.status(erroNumero.status).json({"message": erroNumero.message});
 
-    if (!numero_conta_origem || !numero_conta_destino) {
-        return res.status(400).json({"message": "As contas de origem e destino são obrigatórias"});
-    };
-
-    if (!contaOrigem) {
-        return res.status(404).json({"message": "a conta de origem não existe."});
-    };
-
-    if (!contaDestino) {
-        return res.status(404).json({"message": "a conta destino não existe."});
-    };    
+    const erroSenha = validarSenhaConta(conta, senha);
+    if (erroSenha) return res.status(erroSenha.status).json({"message": erroSenha.message});
 
     next();
-};
+}
