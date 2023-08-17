@@ -15,8 +15,7 @@ import {
 
 import { 
     validarDeposito,
-    validarExtrato,
-    validarSaldo,
+    validarSaldoExtrato,
     validarSaque,
     validarTransferencia
 } from './middlewares/transacoesMiddleware.js';
@@ -29,8 +28,9 @@ router.get('/contas', validarListagem, listarContas);
 router.post('/contas', validarDados, cadastrarConta);
 router.put('/contas/:numeroConta/usuario', validarDados, atualizarConta);
 router.delete('/contas/:numeroConta', validarExclusao, excluirConta);
-router.get('/contas/saldo', validarSaldo, exibirSaldo);
-router.get('/contas/extrato', validarExtrato, exibirExtrato);
+
+router.get('/contas/saldo', validarSaldoExtrato, exibirSaldo);
+router.get('/contas/extrato', validarSaldoExtrato, exibirExtrato);
 
 router.post('/transacoes/depositar', validarDeposito, depositar);
 router.post('/transacoes/sacar', validarSaque, sacar);
