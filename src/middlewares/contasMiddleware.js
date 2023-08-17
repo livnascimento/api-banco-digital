@@ -2,7 +2,6 @@ import bancodedados from "../bancodedados.js";
 
 import { validarCpf, validarDataDeNascimento, validarEmail, validarNome, validarSaldoZerado, validarSenhaBanco, validarSenhaCadastro, validarTelefone } from "../utils/contaUtils.js";
 import { validarNumeroConta } from "../utils/transacoesUtils.js";
-import { validarSaldo } from "./transacoesMiddleware.js";
 
 export const validarListagem = (req, res, next) => {
     const { senha_banco } = req.query;

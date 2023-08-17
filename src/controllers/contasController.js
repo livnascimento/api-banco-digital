@@ -20,14 +20,15 @@ export const cadastrarConta = (req, res) => {
 export const atualizarConta = (req, res) => {
     const { numeroConta } = req.params;
     const usuario = bancodedados.contas.find(conta => conta.numero === numeroConta);
+    const numero = usuario.numero;
     const { nome, cpf, data_nascimento, telefone, email, senha } = req.body;
 
-    usuario.numero = usuario.numero;
+    usuario.numero = numero;
     usuario.nome = nome;
-    usuario.cpf= cpf ?? usuario.cpf;
+    usuario.cpf= cpf;
     usuario.data_nascimento = data_nascimento;
     usuario.telefone = telefone;
-    usuario.email = email ?? usuario.email;
+    usuario.email = email;
     usuario.senha = senha;
 
     res.status(200).send();
