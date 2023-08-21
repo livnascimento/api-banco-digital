@@ -10,22 +10,40 @@ export const validarListagem = (req, res, next) => {
     next();
 };
 
-export const validarDados = (req, res, next) => {
+export const validarCadastro = (req, res, next) => {
     const { nome, cpf, data_nascimento, telefone, email, senha} = req.body;
-    const validacoes = [validarNome(nome), validarCpf(cpf), validarDataDeNascimento(data_nascimento), validarTelefone(telefone), validarEmail(email), validarSenhaCadastro(senha)]
+    const validacoes = [() => validarNome(nome), () => validarCpf(cpf), () => validarDataDeNascimento(data_nascimento), () => validarTelefone(telefone), () => validarEmail(email), () => validarSenhaCadastro(senha)]
 
-    for (let validacao of validacoes)
-        if (validacao) return res.status(validacao.status).json({"message": validacao.message});
+    for (let validacao of validacoes){
+        const erro = validacao();
+        if (erro) return res.status(erro.status).json({"message": erro.message});
+    }
 
     next();
 };
 
-export const validarExclusao = (req, res, next) => {
-    const {numeroConta} = req.params;
-    const validacoes = [validarNumeroConta(numeroConta), validarSaldoZerado(numeroConta)];
+export const validarAtualizacao = (req, res, next) => {
+    const { nome, cpf, data_nascimento, telefone, email, senha} = req.body;
+    const { numeroConta } = req.params;
+    const validacoes = [() => validarNumeroConta(numeroConta), () => validarNome(nome), () => validarCpf(cpf, numeroConta), () => validarDataDeNascimento(data_nascimento), () => validarTelefone(telefone), () => validarEmail(email), () => validarSenhaCadastro(senha)]
 
-    for (let validacao of validacoes)
-        if (validacao) return res.status(validacao.status).json({"message": validacao.message});
+    for (let validacao of validacoes){
+        const erro = validacao();
+        if (erro) return res.status(erro.status).json({"message": erro.message});
+    }
 
-    next();   
+    next();  
 };
+
+
+export const validarExclusao = (req, res, next) => {
+    const { numeroConta } = req.params;
+    const validacoes = [() => validarNumeroConta(numeroConta), () => validarSaldoZerado(numeroConta)];
+
+    for (let validacao of validacoes){
+        const erro = validacao();
+        if (erro) return res.status(erro.status).json({"message": erro.message});
+    }
+
+    next();  
+}; 

@@ -11,7 +11,7 @@ export const validarSenhaBanco = (senha) => {
     if (senha != senhaCorreta) {
         return { status: 401, message: "Senha incorreta" };
     };
-};
+}
 
 export const validarNome = (nome) => {
     if (!nome) {
@@ -20,37 +20,46 @@ export const validarNome = (nome) => {
     if (nome.replaceAll(" ", "") == "") {
         return { status: 400, message: "Nome inválido." };
     }
-};
+}
 
 export const validarTelefone = (telefone) => {
     if (!telefone) {
-        return res.status(400).json({ "message": "O telefone é obrigatório." });
-    }
-    if (bancodedados.contas.some(conta => conta.telefone === telefone)) {
-        return res.status(400).json({ "message": "Já existe uma conta cadastrada com esse telefone." });
+        return { status: 400, message: "O telefone é obrigatório." };
     }
 }
 
-export const validarCpf = (cpf) => {
+export const validarCpf = (cpf, numeroConta = false) => {
+
+    const cpfExistente = bancodedados.contas.find(conta => cpf === conta.usuario.cpf);
+
     if (!cpf) {
-        return { status: 400, message: "O cpf é obrigatório." };
+        return { status: 400, message: "O CPF é obrigatório." };
     };
 
     if (!CPF.Validate(cpf)) {
         return { status: 400, message: "CPF inválido." };
     };
 
-    if (bancodedados.contas.some(conta => cpf === conta.cpf)) {
-        return { status: 400, message: "Já existe uma conta cadastrada com esse cpf." };
+    if (cpfExistente) {
+        if (numeroConta) {
+            const conta = bancodedados.contas.find(conta => conta.numero == numeroConta);
+            const indexConta = bancodedados.contas.indexOf(conta);
+            const indexCpf = bancodedados.contas.indexOf(cpfExistente);
+            if (indexConta != indexCpf) return { status: 400, message: "Já existe uma conta cadastrada com esse CPF." };
+        } else {
+            return { status: 400, message: "Já existe uma conta cadastrada com esse CPF." };
+        }
     };
 
-};
+    return false;
+}
 
 export const validarDataDeNascimento = (dataNascimento) => {
     if (!dataNascimento) {
         return { status: 400, message: "A data de nascimento é obrigatória." };
     }
-};
+    return false;
+}
 
 export const validarEmail = (email) => {
     if (!email) {
@@ -64,7 +73,8 @@ export const validarEmail = (email) => {
     if (bancodedados.contas.some(conta => email === conta.email)) {
         return { status: 400, message: "Já existe uma conta cadastrada com esse e-mail." };
     }
-};
+    return false;
+}
 
 export const validarSenhaCadastro = (senha) => {
     if (!senha) {
@@ -74,11 +84,15 @@ export const validarSenhaCadastro = (senha) => {
     if (senha.length < 5) {
         return { status: 400, message: "A senha precisa ter, no mínimo, 5 caracteres." };
     };
-};
+    return false;
+}
 
 export const validarSaldoZerado = (numeroConta) => {
-    const saldo = bancodedados.contas.find(conta => conta.numero === numeroConta).saldo;
+    const conta = bancodedados.contas.find(conta => conta.numero === numeroConta);
+    const saldo = conta.saldo;
     if (saldo != 0) {
         return { status: 401, message: "Só é possível excluir uma conta quando o saldo for 0"};
     }
-};
+    return false;
+}
+

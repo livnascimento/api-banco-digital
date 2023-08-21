@@ -1,11 +1,13 @@
 import bancodedados from "../bancodedados.js";
 
 export const validarNumeroConta = (numeroConta) => {
-    if (!numeroConta) return { status: 400, message: "O número da conta é obrigatório"};
-    if (!bancodedados.contas.some(conta => conta.numero === numeroConta)) {
-        return {status: 404, message: "Não existe uma conta com esse número."};
+    if (!numeroConta) {
+        return { status: 400, message: "O número da conta é obrigatório"};
     }
-    return null;
+    if (!bancodedados.contas.find(conta => conta.numero === numeroConta)) {
+        return { status: 404, message: "Não existe uma conta com esse número." };
+    }
+    return undefined;
 };
 
 export const validarSaldoInsuficiente = (contaOrigem, valor) => {
