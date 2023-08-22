@@ -13,7 +13,7 @@ export const depositar = (req, res) => {
         "valor": valor
     });
 
-    return res.status(200).send();
+    return res.status(204).send();
 };
 
 export const sacar = (req, res) => {
@@ -28,7 +28,7 @@ export const sacar = (req, res) => {
         "valor": valor
     });
 
-    return res.status(200).send();
+    return res.status(204).send();
 };
 
 export const transferir = (req, res) => {
@@ -46,7 +46,7 @@ export const transferir = (req, res) => {
         "valor": valor
     });
 
-    return res.status(200).send(bancodedados);
+    return res.status(204).send();
 
 };
 

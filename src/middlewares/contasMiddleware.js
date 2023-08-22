@@ -1,4 +1,4 @@
-import { validarCpf, validarDataDeNascimento, validarEmail, validarNome, validarSaldoZerado, validarSenhaBanco, validarSenhaCadastro, validarTelefone } from "../utils/contaUtils.js";
+import { validarCpf, validarDadosIguais, validarDataDeNascimento, validarEmail, validarNome, validarSaldoZerado, validarSenhaBanco, validarSenhaCadastro, validarTelefone } from "../utils/contaUtils.js";
 import { validarNumeroConta } from "../utils/transacoesUtils.js";
 
 export const validarListagem = (req, res, next) => {
@@ -25,7 +25,7 @@ export const validarCadastro = (req, res, next) => {
 export const validarAtualizacao = (req, res, next) => {
     const { nome, cpf, data_nascimento, telefone, email, senha} = req.body;
     const { numeroConta } = req.params;
-    const validacoes = [() => validarNumeroConta(numeroConta), () => validarNome(nome), () => validarCpf(cpf, numeroConta), () => validarDataDeNascimento(data_nascimento), () => validarTelefone(telefone), () => validarEmail(email), () => validarSenhaCadastro(senha)]
+    const validacoes = [() => validarNumeroConta(numeroConta), () => validarDadosIguais(req.body, numeroConta), () => validarNome(nome), () => validarCpf(cpf, numeroConta), () => validarDataDeNascimento(data_nascimento), () => validarTelefone(telefone), () => validarEmail(email, numeroConta), () => validarSenhaCadastro(senha)]
 
     for (let validacao of validacoes){
         const erro = validacao();

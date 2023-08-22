@@ -17,6 +17,18 @@ const bancodedados = {
                 "email": "livia@gmail.com",
                 "senha": "123456"
             }
+        },
+        {
+            "numero": "885748203-3",
+            "saldo": 0,
+            "usuario": {
+                "nome": "lucas",
+                "cpf": "13424967440",
+                "data_nascimento": "2001-11-12",
+                "telefone": "71999998899",
+                "email": "lucas@gmail.com",
+                "senha": "123456"
+            }
         }
     ],
     saques: [],

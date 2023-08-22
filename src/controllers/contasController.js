@@ -1,4 +1,5 @@
 import bancodedados from "../bancodedados.js";
+import { gerarNumero } from "../utils/contaUtils.js";
 
 export const listarContas = (req, res) => {
     res.status(200).json(bancodedados.contas);
@@ -29,7 +30,7 @@ export const atualizarConta = (req, res) => {
     conta.usuario.email = email;
     conta.usuario.senha = senha;
 
-    res.status(200).send();
+    res.status(204).send();
 
 }
 
@@ -38,10 +39,5 @@ export const excluirConta = (req, res) => {
     const conta = bancodedados.contas.find(conta => conta.numero === numeroConta); 
     bancodedados.contas.splice(conta, 1);
 
-    return res.status(200).send();
-};
-
-const gerarNumero = () => {
-    const numero = (Math.random().toFixed(10) * 10000000000).toString();
-    return numero.slice(0, 9).concat('-' + numero.slice(8, 9));
+    return res.status(204).send();
 };
