@@ -37,7 +37,7 @@ export const atualizarConta = (req, res) => {
 export const excluirConta = (req, res) => {
     const { numeroConta } = req.params;
     const conta = bancodedados.contas.find(conta => conta.numero === numeroConta); 
-    bancodedados.contas.splice(conta, 1);
+    bancodedados.contas.splice(bancodedados.contas.indexOf(conta), 1);
 
     return res.status(204).send();
 };

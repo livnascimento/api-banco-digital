@@ -114,7 +114,7 @@ export const validarDadosIguais = (body, numeroConta) => {
         conta.senha == body.senha
         ) 
     {
-        return { status: 400, message: "Não foi possível altualizar a conta, pois todos os dados são iguais aos originais."};
+        return { status: 403, message: "Não foi possível altualizar a conta, pois todos os dados são iguais aos originais."};
     }
 }
 
